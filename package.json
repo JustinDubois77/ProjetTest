@@ -6,6 +6,8 @@
     "start": "concurrently \"npm run server\" \"npm run flutter\"",
     "server": "cd functions && npm start",
     "flutter": "flutter run -d chrome"
+  },
+  "dependencies": {
+    "firebase": "^11.8.1"
   }
 }
-
