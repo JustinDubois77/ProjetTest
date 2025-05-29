@@ -1,36 +1,30 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
-import 'register_screen.dart';
-import 'home_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   String _message = '';
 
-  void _login() async {
+  void _register() async {
     try {
-      final result = await ApiService.login(
+      final result = await ApiService.register(
         _emailController.text,
         _passwordController.text,
+        _usernameController.text
       );
-
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomeScreen(email: result['email']),
-        ),
-      );
+      setState(() {
+        _message = 'Compte créé pour ${result['email']}';
+      });
     } catch (e) {
-      if (!mounted) return; 
       setState(() {
         _message = 'Erreur : ${e.toString()}';
       });
@@ -40,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Connexion')),
+      appBar: AppBar(title: const Text('Créer un compte')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -50,24 +44,18 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: const InputDecoration(labelText: 'Email'),
             ),
             TextField(
+              controller: _usernameController,
+              decoration: const InputDecoration(labelText: 'Nom d’utilisateur'),
+            ),
+            TextField(
               controller: _passwordController,
               decoration: const InputDecoration(labelText: 'Mot de passe'),
               obscureText: true,
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _login,
-              child: const Text('Se connecter'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const RegisterScreen()),
-                );
-              },
-              child: const Text("Créer un compte"),
+              onPressed: _register,
+              child: const Text('S’inscrire'),
             ),
             const SizedBox(height: 20),
             Text(_message),

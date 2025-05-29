@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run flutter\"",
+    "server": "cd functions && npm start",
+    "flutter": "flutter run -d chrome"
+  }
+}
+
