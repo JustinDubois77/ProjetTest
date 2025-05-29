@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
-  final String email;
+  final String username;
 
-  const HomeScreen({Key? key, required this.email}) : super(key: key);
+  const HomeScreen({Key? key, required this.username}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +11,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Accueil')),
       body: Center(
         child: Text(
-          'Bienvenue, $email',
+          'Bienvenue, $username',
           style: const TextStyle(fontSize: 24),
         ),
       ),
