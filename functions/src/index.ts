@@ -1,33 +1,19 @@
-import express from 'express';
-import http from 'http';
-import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
-import compression from 'compression';
-import cors from 'cors';
-import mongoose from 'mongoose';
+/**
+ * Import function triggers from their respective submodules:
+ *
+ * import {onCall} from "firebase-functions/v2/https";
+ * import {onDocumentWritten} from "firebase-functions/v2/firestore";
+ *
+ * See a full list of supported triggers at https://firebase.google.com/docs/functions
+ */
 
-import router from './router'
+import {onRequest} from "firebase-functions/v2/https";
+import * as logger from "firebase-functions/logger";
 
-const app = express();
+// Start writing functions
+// https://firebase.google.com/docs/functions/typescript
 
-app.use(cors({
-    credentials: true,
-}));
-
-app.use(compression());
-app.use(cookieParser());
-app.use(bodyParser.json());
-
-const server = http.createServer(app);
-
-server.listen(8080, () =>{
-    console.log('Server running on http://localhost:8080/')
-});
-
-const MONGO_URL = 'mongodb+srv://admin:admin%40123@cluster0.ugsodeq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-
-mongoose.Promise = Promise;
-mongoose.connect(MONGO_URL);
-mongoose.connection.on('error', (error: Error) => console.log(error));
-
-app.use('/', router());
+// export const helloWorld = onRequest((request, response) => {
+//   logger.info("Hello logs!", {structuredData: true});
+//   response.send("Hello from Firebase!");
+// });
