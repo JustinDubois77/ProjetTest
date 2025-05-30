@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -9,24 +9,73 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _emailController = TextEditingController();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
   String _message = '';
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   void _register() async {
-    try {
-      final result = await ApiService.register(
-        _emailController.text,
-        _passwordController.text,
-        _usernameController.text
-      );
+    if (_emailController.text.trim().isEmpty || 
+        _passwordController.text.trim().isEmpty ||
+        _confirmPasswordController.text.trim().isEmpty) {
       setState(() {
-        _message = 'Compte créé pour ${result['email']}';
+        _message = 'Veuillez remplir tous les champs';
+      });
+      return;
+    }
+
+    if (_passwordController.text != _confirmPasswordController.text) {
+      setState(() {
+        _message = 'Les mots de passe ne correspondent pas';
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _message = '';
+    });
+
+    try {
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _message = 'Compte créé avec succès pour ${credential.user?.email}';
+      });
+
+      // Redirection après 2 sec
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          Navigator.pop(context);
+        }
+      });
+
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _message = 'Erreur Firebase : ${e.code} — ${e.message}';
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
-        _message = 'Erreur : ${e.toString()}';
+        _isLoading = false;
+        _message = 'Erreur inconnue : $e';
       });
     }
   }
@@ -34,31 +83,67 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Créer un compte')),
+      appBar: AppBar(
+        title: const Text('Créer un compte'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.emailAddress,
             ),
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Nom d’utilisateur'),
-            ),
+            const SizedBox(height: 16),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Mot de passe'),
+              decoration: const InputDecoration(
+                labelText: 'Mot de passe',
+                border: OutlineInputBorder(),
+              ),
               obscureText: true,
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _register,
-              child: const Text('S’inscrire'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _confirmPasswordController,
+              decoration: const InputDecoration(
+                labelText: 'Confirmer le mot de passe',
+                border: OutlineInputBorder(),
+              ),
+              obscureText: true,
             ),
-            const SizedBox(height: 20),
-            Text(_message),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _register,
+                child: _isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text('Créer le compte'),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Déjà un compte ? Se connecter'),
+            ),
+            if (_message.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Text(
+                _message,
+                style: TextStyle(
+                  color: _message.contains('Erreur') ? Colors.red : Colors.green,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ],
         ),
       ),
