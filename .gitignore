@@ -45,9 +45,34 @@ app.*.map.json
 
 #functions
 node_modules/
+.env
+functions/.env
 
 #idea
 .idea/
 
 #vs/code
 .vscode/
+
+# Firebase Emulators local data (si tu les utilises)
+firebase-debug.log
+firestore-export/
+.emulator/
+
+# VSCode (à commenter/décommenter selon ton usage)
+# .vscode/
+
+# macOS (au cas où)
+*.DS_Store
+
+# Linux
+*~
+
+# Node.js (sécurité + propreté)
+functions/.env
+functions/*.local.js
+functions/.firebase/
+
+# Flutter build web
+/web/.dart_tool/
+web/build/
