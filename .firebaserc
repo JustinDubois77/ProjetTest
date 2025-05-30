@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "projet-test2-3b2e0"
-  }
+    "default": "testfirebase-30c7f",
+    "testfirebase": "testfirebase-30c7f"
+  },
+  "targets": {},
+  "etags": {}
 }
