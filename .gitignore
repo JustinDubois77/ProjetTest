@@ -52,7 +52,7 @@ functions/.env
 .idea/
 
 #vs/code
-.vscode/
+/.vscode/
 
 # Firebase Emulators local data (si tu les utilises)
 firebase-debug.log
