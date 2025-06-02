@@ -14,7 +14,7 @@ class DefaultFirebaseOptions {
       apiKey: "AIzaSyATwiaLtXdeT7ppYEbj-8T0MRSdvDKwfzQ",
       authDomain: "testfirebase-30c7f.firebaseapp.com",
       projectId: "testfirebase-30c7f",
-      storageBucket: "testfirebase-30c7f.firebasestorage.app",
+      storageBucket: "testfirebase-30c7f.appspot.com",
       messagingSenderId: "10299087558",
       appId: "1:10299087558:web:86b0bcdb31dacd58d7d5c7");
 }
