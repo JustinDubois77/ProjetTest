@@ -11,7 +11,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =TextEditingController();
 
   String _message = '';
   bool _isLoading = false;
@@ -25,7 +25,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _register() async {
-    if (_emailController.text.trim().isEmpty || 
+    
+    //champs incomplètes
+    if (_emailController.text.trim().isEmpty ||
         _passwordController.text.trim().isEmpty ||
         _confirmPasswordController.text.trim().isEmpty) {
       setState(() {
@@ -34,9 +36,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
+    //mdp identique
     if (_passwordController.text != _confirmPasswordController.text) {
       setState(() {
         _message = 'Les mots de passe ne correspondent pas';
+      });
+      return;
+    }
+
+    //pas moins de 6 caractères
+    if (_passwordController.text.length < 6) {
+      setState(() {
+        _message = 'Le mot de passe doit contenir au moins 6 caractères';
       });
       return;
     }
@@ -47,7 +58,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     try {
-      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
@@ -64,7 +76,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           Navigator.pop(context);
         }
       });
-
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       setState(() {
@@ -139,7 +150,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Text(
                 _message,
                 style: TextStyle(
-                  color: _message.contains('Erreur') ? Colors.red : Colors.green,
+                  color:
+                      _message.contains('Erreur') ? Colors.red : Colors.green,
                 ),
                 textAlign: TextAlign.center,
               ),
